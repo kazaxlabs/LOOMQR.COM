@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /assets/{asset} {
+      // Owners can read/write their own assets
+      allow read, write: if request.auth != null && (resource == null || resource.data.userId == request.auth.uid);
+      
+      // Public can read dynamic assets for redirection
+      allow read: if resource.data.type == 'Dynamic';
+      
+      // Public can increment scan count for dynamic assets
+      allow update: if resource.data.type == 'Dynamic' 
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['scans']);
+    }
+    
+    match /scans/{scan} {
+      // Anyone can log a scan
+      allow create: if true;
+      
+      // Only owners can see their scan analytics
+      allow read: if request.auth != null && resource.data.ownerId == request.auth.uid;
+    }
+    
+    // Default deny for other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
