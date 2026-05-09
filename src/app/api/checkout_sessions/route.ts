@@ -4,7 +4,7 @@ import { stripe } from '@/lib/stripe';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { priceId, userId, successUrl, cancelUrl } = body;
+    const { priceId, userId, tier, successUrl, cancelUrl } = body;
 
     if (!priceId) {
       return NextResponse.json(
@@ -34,7 +34,8 @@ export async function POST(req: Request) {
       success_url: successUrl || `${req.headers.get('origin')}/?success=true`,
       cancel_url: cancelUrl || `${req.headers.get('origin')}/?canceled=true`,
       metadata: {
-        userId: userId
+        userId: userId,
+        tier: tier || 'pro'
       }
     });
 

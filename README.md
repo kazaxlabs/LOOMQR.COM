@@ -22,9 +22,28 @@ A high-fidelity, minimalist 1-page SaaS for generating, customizing, and managin
 
 1. Clone the repository.
 2. Install dependencies: `npm install`.
-3. Run development server: `npm run dev`.
-4. Build for production: `npm run build`.
+3. Create a `.env.local` file based on `.env.example`.
+4. Run development server: `npm run dev`.
+5. Build for production: `npm run build`.
+
+## Project Structure
+
+- `src/app/`: Next.js App Router core (routing, layouts, global styles).
+- `src/components/ui/`: Reusable, high-fidelity UI components.
+- `src/lib/`: Business logic, Firebase initialization, and utility functions.
+- `src/hooks/`: Custom React hooks for state and data management.
+- `public/`: Static assets and icons.
+
+## Development & Quality
+
+### Project Health Audit
+Run the automated health check script to ensure all essential files and configurations are present:
+```powershell
+.\validate_health.ps1
+```
 
 ## Security
 
 The project implements strict Firestore Security Rules. Ensure `request.auth` is configured in your Firebase Console.
+All data access is isolated by `userId` to ensure tenant privacy.
+

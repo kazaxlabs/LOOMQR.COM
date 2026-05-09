@@ -6,12 +6,25 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "source": ".",
+    "site": "qr-gen-professional-app",
+    "public": ".firebase/qr-gen-professional-app/hosting",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ]
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "ssrqrgenprofessionalapp",
+          "region": "us-central1"
+        }
+      }
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
   },
   "auth": {
     "providers": {

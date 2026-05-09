@@ -41,7 +41,13 @@ export default function TermsPage() {
           <section className="glass-card p-8 flex-col gap-4">
             <h2 className="text-xl font-bold">3. Payments & Subscriptions</h2>
             <p className="text-sm leading-relaxed color-muted">
-              Pro features are available via subscription. All sales are final. We do not offer refunds except where required by law.
+              LOOM offers Starter (Free), Pro, and Business subscription tiers. By subscribing to a paid tier, you authorize Kazaxlabs to charge your payment method on a recurring basis (monthly or annually) according to your selection. 
+            </p>
+            <p className="text-sm leading-relaxed color-muted">
+              <strong>Cancellations:</strong> You may cancel your subscription at any time via the billing portal. Access to paid features will continue until the end of your current billing period.
+            </p>
+            <p className="text-sm leading-relaxed color-muted">
+              <strong>Refunds:</strong> All sales are final. We do not offer refunds except where required by law.
             </p>
           </section>
  

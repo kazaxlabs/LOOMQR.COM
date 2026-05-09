@@ -28,6 +28,7 @@ export async function POST(req: Request) {
     case 'checkout.session.completed':
       const session = event.data.object as any;
       const userId = session.client_reference_id || session.metadata?.userId;
+      const tier = session.metadata?.tier || 'pro';
 
       if (userId) {
         try {
@@ -36,13 +37,13 @@ export async function POST(req: Request) {
           
           if (userDoc.exists()) {
             await updateDoc(userRef, {
-              tier: 'pro',
+              tier: tier,
               stripeCustomerId: session.customer,
               updatedAt: new Date().toISOString()
             });
           } else {
             await setDoc(userRef, {
-              tier: 'pro',
+              tier: tier,
               stripeCustomerId: session.customer,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
