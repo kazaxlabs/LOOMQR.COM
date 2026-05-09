@@ -2,12 +2,12 @@ import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  projectId: "qr-gen-professional-app",
-  appId: "1:177443024720:web:904a09cb680c975c520655",
-  storageBucket: "qr-gen-professional-app.firebasestorage.app",
-  apiKey: "AIzaSyBhYpmvUMFn6qglktiRLZGkmH0_hMgml-k",
-  authDomain: "qr-gen-professional-app.firebaseapp.com",
-  messagingSenderId: "177443024720"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 import { getAuth, GoogleAuthProvider } from "firebase/auth";

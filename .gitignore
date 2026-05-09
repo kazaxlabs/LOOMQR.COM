@@ -39,11 +39,7 @@ firebug.log
 firebase-debug.log*
 ui-debug.log*
 
-# Project specific junk
-Organized_Skills/
-scratch/
-test-*.cjs
-eslint_output.txt
-preview-box.png
-qr_saas_prototype_*.png
-qr-generator/
+# Project specific
+archived/
+testing/test-*.cjs
+*.log

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { Telemetry, ScanRecord } from '@/lib/telemetry';
 import { LockedState } from '@/components/layout/LockedState';
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -18,78 +17,28 @@ interface AnalyticsTabProps {
 }
 
 export function AnalyticsTab({ assets, isLoggedIn, userId, setShowLoginModal }: AnalyticsTabProps) {
-  const [scans, setScans] = useState<any[]>([]);
+  const [scans, setScans] = useState<ScanRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoggedIn || !userId) return;
 
-    // Note: This query requires a composite index: ownerId (ASC) + timestamp (DESC)
-    const q = query(
-      collection(db, 'scans'),
-      where('ownerId', '==', userId),
-      orderBy('timestamp', 'desc')
+    const unsubscribe = Telemetry.subscribeToUserScans(
+      userId,
+      (data) => {
+        setScans(data);
+        setLoading(false);
+      },
+      () => setLoading(false)
     );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const scanData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setScans(scanData);
-      setLoading(false);
-    }, (error) => {
-      console.error("Analytics stream error:", error);
-      setLoading(false);
-    });
 
     return () => unsubscribe();
   }, [isLoggedIn, userId]);
 
-  // Data processing for charts
-  const timeData = useMemo(() => {
-    const groups: Record<string, number> = {};
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d.toLocaleDateString();
-    }).reverse();
-
-    last7Days.forEach(date => { groups[date] = 0; });
-
-    scans.forEach(scan => {
-      const date = new Date(scan.timestamp).toLocaleDateString();
-      if (groups[date] !== undefined) {
-        groups[date]++;
-      }
-    });
-
-    return Object.entries(groups).map(([date, count]) => ({ 
-      date: date.split('/')[0] + '/' + date.split('/')[1], // Short format
-      count 
-    }));
-  }, [scans]);
-
-  const locationData = useMemo(() => {
-    const groups: Record<string, number> = {};
-    scans.forEach(scan => {
-      const loc = scan.location || 'Unknown';
-      groups[loc] = (groups[loc] || 0) + 1;
-    });
-    return Object.entries(groups)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
-  }, [scans]);
-
-  const deviceData = useMemo(() => {
-    const groups: Record<string, number> = {};
-    scans.forEach(scan => {
-      const dev = scan.device || 'Other';
-      groups[dev] = (groups[dev] || 0) + 1;
-    });
-    return Object.entries(groups).map(([name, value]) => ({ name, value }));
-  }, [scans]);
+  // High-leverage aggregations via Telemetry module
+  const timeData = useMemo(() => Telemetry.aggregateTimeline(scans), [scans]);
+  const locationData = useMemo(() => Telemetry.aggregateTopLocations(scans), [scans]);
+  const deviceData = useMemo(() => Telemetry.aggregateDevices(scans), [scans]);
 
   if (!isLoggedIn) {
     return <LockedState title="Insights Locked" message="Sign in to view detailed performance metrics for your codes." onLogin={() => setShowLoginModal(true)} />;
