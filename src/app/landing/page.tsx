@@ -45,12 +45,29 @@ const schemaSoftwareApp = {
   "applicationSubCategory": "QR Code Generator",
   "operatingSystem": "Web, iOS, Android",
   "description": "Create, customize, and track dynamic QR codes. Update redirect destinations in real-time, analyze scan analytics by device and location, and export print-ready files.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "description": "Free plan available. Pro plan with advanced features."
-  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "name": "Starter Plan",
+      "description": "Free forever for individuals. Includes 3 dynamic QR codes."
+    },
+    {
+      "@type": "Offer",
+      "price": "12.00",
+      "priceCurrency": "USD",
+      "name": "Pro Plan",
+      "description": "Advanced tracking and unlimited scans for growing brands."
+    },
+    {
+      "@type": "Offer",
+      "price": "39.00",
+      "priceCurrency": "USD",
+      "name": "Business Plan",
+      "description": "Institutional grade features for teams and agencies."
+    }
+  ],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.8",
@@ -150,6 +167,58 @@ const faqs = [
 /* ─── Component ────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
+  const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('monthly');
+
+  const tiers = [
+    {
+      plan: "Starter",
+      price: "$0",
+      desc: "For individuals and side projects.",
+      features: [
+        "3 Dynamic QR Codes",
+        "500 Scans / month",
+        "Custom Design Studio",
+        "PNG & SVG Export",
+        "Basic Analytics",
+      ],
+      cta: "Get Started Free",
+      accent: false,
+    },
+    {
+      plan: "Pro",
+      price: billingCycle === 'monthly' ? "$12" : "$10",
+      sub: billingCycle === 'monthly' ? "per month" : "per month, billed annually",
+      desc: "Perfect for growing brands and creators.",
+      features: [
+        "100 Dynamic QR Codes",
+        "Unlimited Scans",
+        "Advanced Analytics (Geo, Device)",
+        "Remove LOOM Branding",
+        "Bulk Generation",
+        "Priority Email Support",
+      ],
+      cta: "Upgrade to Pro",
+      accent: true,
+    },
+    {
+      plan: "Business",
+      price: billingCycle === 'monthly' ? "$39" : "$32",
+      sub: billingCycle === 'monthly' ? "per month" : "per month, billed annually",
+      desc: "Institutional grade for teams and agencies.",
+      features: [
+        "Unlimited Dynamic QR Codes",
+        "Full Analytics Export (CSV)",
+        "Custom Domain Support",
+        "Team Management (3 seats)",
+        "White-label Bridge Pages",
+        "API Access (Coming Soon)",
+        "24/7 Dedicated Support",
+      ],
+      cta: "Contact Sales",
+      accent: false,
+    }
+  ];
+
   return (
     <>
       {/* Structured Data — one script block per schema type */}
@@ -367,48 +436,117 @@ export default function LandingPage() {
         </section>
 
         {/* ── Plan Comparison ─────────────────────────────────────────── */}
-        <section className="section" style={{ padding: '80px 2rem' }} aria-labelledby="pricing-heading">
-          <div style={{ maxWidth: '900px', width: '100%' }}>
-            <div style={{ marginBottom: '48px', textAlign: 'center' }}>
-              <span className="feature-tag">Simple pricing</span>
-              <h2 id="pricing-heading" className="h-lg">Start free. Upgrade when you need more.</h2>
+        <section id="pricing" className="section" style={{ padding: '80px 2rem' }} aria-labelledby="pricing-heading">
+          <div style={{ maxWidth: '1100px', width: '100%' }}>
+            <div style={{ marginBottom: '64px', textAlign: 'center' }}>
+              <span className="feature-tag">Institutional Pricing</span>
+              <h2 id="pricing-heading" className="h-lg">Built for scale. Priced for value.</h2>
+              
+              {/* Billing Toggle */}
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '1rem', 
+                marginTop: '2rem' 
+              }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: billingCycle === 'monthly' ? 'var(--text)' : 'var(--text-muted)' }}>Monthly</span>
+                <button 
+                  onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
+                  style={{
+                    width: '52px',
+                    height: '28px',
+                    borderRadius: '100px',
+                    background: 'var(--accent)',
+                    padding: '4px',
+                    position: 'relative',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: '0.3s ease'
+                  }}
+                  aria-label={`Switch to ${billingCycle === 'monthly' ? 'annual' : 'monthly'} billing`}
+                >
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    background: '#fff',
+                    borderRadius: '50%',
+                    position: 'absolute',
+                    left: billingCycle === 'monthly' ? '4px' : '28px',
+                    top: '4px',
+                    transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }} />
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: billingCycle === 'annual' ? 'var(--text)' : 'var(--text-muted)' }}>Annual</span>
+                  <span style={{ 
+                    fontSize: '11px', 
+                    fontWeight: 800, 
+                    color: '#fff', 
+                    background: '#10b981', 
+                    padding: '2px 8px', 
+                    borderRadius: '100px',
+                    textTransform: 'uppercase'
+                  }}>Save 20%</span>
+                </div>
+              </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-              {[
-                {
-                  plan: "Free",
-                  price: "$0",
-                  desc: "Everything you need to get started.",
-                  features: ["Custom QR code design", "PNG & SVG export", "16 QR content types", "Instant live preview"],
-                  cta: "Get Started Free",
-                  accent: false,
-                },
-                {
-                  plan: "Pro",
-                  price: "One-time",
-                  desc: "For teams that need tracking and flexibility.",
-                  features: ["Everything in Free", "Dynamic redirect updates", "Scan analytics dashboard", "Unlimited QR library", "Priority support"],
-                  cta: "Upgrade to Pro",
-                  accent: true,
-                }
-              ].map((tier, i) => (
-                <div key={i} className="glass-card" style={{ background: tier.accent ? 'var(--accent)' : '#fff', border: tier.accent ? 'none' : undefined }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                    <div>
-                      <div style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: tier.accent ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)' }}>{tier.plan}</div>
-                      <div style={{ fontSize: '2rem', fontWeight: 900, color: tier.accent ? '#fff' : 'var(--text)' }}>{tier.price}</div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+              {tiers.map((tier, i) => (
+                <div key={i} className="glass-card" style={{ 
+                  background: tier.accent ? 'var(--accent)' : '#fff', 
+                  border: tier.accent ? 'none' : '1px solid var(--border)',
+                  padding: '3rem 2.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transform: tier.accent ? 'scale(1.05)' : undefined,
+                  zIndex: tier.accent ? 1 : 0,
+                  boxShadow: tier.accent ? '0 20px 40px rgba(79, 70, 229, 0.15)' : undefined
+                }}>
+                  <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ 
+                      fontWeight: 900, 
+                      fontSize: '0.85rem', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.1em', 
+                      color: tier.accent ? 'rgba(255,255,255,0.7)' : 'var(--accent)',
+                      marginBottom: '0.5rem'
+                    }}>{tier.plan}</div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+                      <div style={{ fontSize: '3rem', fontWeight: 900, color: tier.accent ? '#fff' : 'var(--text)' }}>{tier.price}</div>
+                      {tier.price !== "$0" && (
+                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: tier.accent ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>/mo</div>
+                      )}
                     </div>
+                    {tier.sub && (
+                      <div style={{ fontSize: '0.8rem', fontWeight: 500, color: tier.accent ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)', marginTop: '0.25rem' }}>{tier.sub}</div>
+                    )}
                   </div>
-                  <p style={{ color: tier.accent ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>{tier.desc}</p>
-                  <ul style={{ listStyle: 'none', padding: 0, marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <p style={{ 
+                    color: tier.accent ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)', 
+                    marginBottom: '2rem', 
+                    fontSize: '0.95rem',
+                    lineHeight: '1.6'
+                  }}>{tier.desc}</p>
+                  <ul style={{ listStyle: 'none', padding: 0, marginBottom: '3rem', display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
                     {tier.features.map((f, j) => (
-                      <li key={j} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: tier.accent ? '#fff' : 'var(--text)' }}>
-                        <Check size={14} style={{ color: tier.accent ? '#fff' : 'var(--accent)', flexShrink: 0 }} aria-hidden="true" />
-                        {f}
+                      <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', fontSize: '0.9rem', color: tier.accent ? '#fff' : 'var(--text)' }}>
+                        <Check size={16} style={{ color: tier.accent ? '#fff' : 'var(--accent)', flexShrink: 0, marginTop: '2px' }} aria-hidden="true" />
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <Link href="/login" className="primary w-full" style={{ background: tier.accent ? '#fff' : undefined, color: tier.accent ? 'var(--accent)' : undefined, textAlign: 'center', display: 'block' }}>
+                  <Link href="/login" className="primary w-full" style={{ 
+                    background: tier.accent ? '#fff' : 'var(--text)', 
+                    color: tier.accent ? 'var(--accent)' : '#fff', 
+                    textAlign: 'center', 
+                    display: 'block',
+                    padding: '1.1rem',
+                    fontSize: '1rem',
+                    fontWeight: 700
+                  }}>
                     {tier.cta}
                   </Link>
                 </div>
@@ -486,7 +624,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div style={{ maxWidth: '1200px', margin: '60px auto 0 auto', paddingTop: '30px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)', flexWrap: 'wrap', gap: '1rem' }}>
-            <span>© 2026 LOOM. All rights reserved.</span>
+            <span>© 2026 Kazaxlabs. All rights reserved.</span>
             <span>Free QR Code Generator — Dynamic, Trackable, Customizable</span>
           </div>
         </footer>

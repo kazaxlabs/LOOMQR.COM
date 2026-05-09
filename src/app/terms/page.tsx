@@ -22,7 +22,7 @@ export default function TermsPage() {
           <section className="glass-card p-8 flex-col gap-4">
             <h2 className="text-xl font-bold">1. Provision of Service</h2>
             <p className="text-sm leading-relaxed color-muted">
-              LOOM (&quot;the Service&quot;) provides tools for creating and managing dynamic QR codes. By using our service, you agree to these terms. We reserve the right to modify or terminate access to the Service at any time to ensure platform integrity and security.
+              Kazaxlabs (&quot;the Company&quot;) provides LOOM (&quot;the Service&quot;), a platform for creating and managing dynamic QR codes. By using our service, you agree to these terms. We reserve the right to modify or terminate access to the Service at any time to ensure platform integrity and security.
             </p>
           </section>
  
@@ -54,7 +54,7 @@ export default function TermsPage() {
         </div>
  
         <footer className="m-t-16 p-t-8 border-t-thin border-opacity-10 flex-row items-center justify-between">
-          <span className="color-muted text-xs font-bold">© 2026 LOOM</span>
+          <span className="color-muted text-xs font-bold">© 2026 Kazaxlabs</span>
         </footer>
       </div>
     </div>

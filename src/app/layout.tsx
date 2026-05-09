@@ -49,6 +49,15 @@ export const metadata: Metadata = {
     images: [{ url: "/images/og-image.png", alt: "LOOM QR code generator — Create. Customize. Track." }],
   },
 
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "LOOM",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   robots: {
     index: true,
     follow: true,

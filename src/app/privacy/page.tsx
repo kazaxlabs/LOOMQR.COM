@@ -75,7 +75,7 @@ export default function PrivacyPage() {
         </div>
  
         <footer className="m-t-16 p-t-8 border-t-thin border-opacity-10 flex-row items-center justify-between">
-          <span className="color-muted text-xs font-bold">© 2026 LOOM</span>
+          <span className="color-muted text-xs font-bold">© 2026 Kazaxlabs</span>
         </footer>
       </div>
     </div>
