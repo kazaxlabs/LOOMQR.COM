@@ -7,7 +7,7 @@
   },
   "hosting": {
     "site": "qr-gen-professional-app",
-    "public": ".firebase/qr-gen-professional-app/hosting",
+    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",

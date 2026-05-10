@@ -96,11 +96,12 @@ export function CreateTab({ qrState, saveAsset, isLoggedIn, isPro, setShowLoginM
 
         
         <div className="flex-col gap-4 relative">
-          <div className="grid-3 gap-2">
-            {QR_TYPES_DATA.slice(0, 5).map(t => (
+          <div className="flex-row gap-2 overflow-x-auto p-b-2 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+            {QR_TYPES_DATA.slice(0, 8).map(t => (
               <button 
                 key={t.id} 
-                className={`top-type-btn ${qrType === t.id ? 'active' : ''}`} 
+                className={`top-type-btn shrink-0 ${qrType === t.id ? 'active' : ''}`} 
+                style={{ minWidth: '100px' }}
                 onClick={() => { setQrType(t.id as any); setShowAllTypes(false); }}
               >
                 <t.icon size={14} />
@@ -108,11 +109,11 @@ export function CreateTab({ qrState, saveAsset, isLoggedIn, isPro, setShowLoginM
               </button>
             ))}
             <button 
-              className={`nav-item ${showAllTypes ? 'active' : ''}`} 
-              style={{ border: '1px solid var(--border)', borderRadius: '12px' }}
+              className={`top-type-btn shrink-0 ${showAllTypes ? 'active' : ''}`} 
+              style={{ minWidth: '100px' }}
               onClick={() => setShowAllTypes(!showAllTypes)}
             >
-              <span className="text-xs font-bold">More options</span>
+              <span className="text-mini tracking-widest uppercase font-black">More</span>
               <ChevronDown size={14} style={{ transform: showAllTypes ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
           </div>
@@ -195,7 +196,7 @@ export function CreateTab({ qrState, saveAsset, isLoggedIn, isPro, setShowLoginM
       </section>
 
       {/* STEP 02: VISUALS */}
-      <section className="grid grid-cols-1 md:grid-cols-[1fr,400px] gap-8 items-start">
+      <section className="md-grid-side">
         <div className="glass-card flex-col gap-8">
           <div className="step-header">
             <span className="feature-tag">Step 02</span>
@@ -311,9 +312,10 @@ export function CreateTab({ qrState, saveAsset, isLoggedIn, isPro, setShowLoginM
                 </div>
               ) : isLoggedIn ? (
                 <CheckoutButton 
-                  priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || ''} 
-                  buttonText="Get Pro to use Logos" 
-                  mode="payment"
+                  priceId={process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || ''} 
+                  tier="pro"
+                  buttonText="Upgrade to Pro" 
+                  mode="subscription"
                   className="primary w-full text-xs" 
                 />
               ) : (

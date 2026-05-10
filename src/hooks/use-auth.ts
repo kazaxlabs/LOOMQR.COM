@@ -25,6 +25,9 @@ export function useAuth() {
             setIsPro(false);
           }
           setLoading(false);
+        }, (error) => {
+          console.error("Firestore Auth Sync Error:", error);
+          setLoading(false); // Stop loading even if rule fails
         });
       } else {
         setIsPro(false);

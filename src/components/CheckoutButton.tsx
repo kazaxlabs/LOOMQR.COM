@@ -9,14 +9,18 @@ interface CheckoutButtonProps {
   priceId: string;
   buttonText?: string;
   className?: string;
+  style?: React.CSSProperties;
   mode?: 'subscription' | 'payment';
+  tier?: string;
 }
 
-export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, mode = 'subscription' }: CheckoutButtonProps) {
+export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, style, mode = 'subscription', tier = 'pro' }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const { userId } = useAuth();
 
   const handleCheckout = async () => {
+    console.log('Initiating checkout with Price ID:', priceId);
+    console.log('User ID:', userId);
     try {
       setLoading(true);
 
@@ -28,6 +32,7 @@ export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, mod
         body: JSON.stringify({
           priceId,
           userId,
+          tier,
           mode,
           successUrl: `${window.location.origin}/?success=true`,
           cancelUrl: `${window.location.origin}/?canceled=true`,
@@ -38,7 +43,7 @@ export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, mod
 
       if (session.error) {
         console.error('Error creating checkout session:', session.error);
-        toast.error('Failed to initiate checkout.');
+        toast.error(`Checkout Error: ${session.error}`);
         return;
       }
 
@@ -48,8 +53,9 @@ export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, mod
         console.error('No session URL returned');
         toast.error('Failed to initiate checkout.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Unexpected error:', err);
+      toast.error(`System Error: ${err.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -60,6 +66,7 @@ export function CheckoutButton({ priceId, buttonText = 'Buy Now', className, mod
       onClick={handleCheckout}
       disabled={loading}
       className={className || "primary"}
+      style={style}
     >
       {loading ? 'Working on it...' : buttonText}
     </button>

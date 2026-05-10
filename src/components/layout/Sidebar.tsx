@@ -80,9 +80,10 @@ export function Sidebar({ activeTab, setActiveTab, theme, setTheme, onLoginClick
             {!isPro && (
               <div className="m-t-1">
                 <CheckoutButton 
-                  priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || ''} 
-                  buttonText="Go Pro" 
-                  mode="payment"
+                  priceId={process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || ''} 
+                  tier="pro"
+                  buttonText="Upgrade to Pro" 
+                  mode="subscription"
                   className="primary w-full text-xs p-2" 
                 />
               </div>

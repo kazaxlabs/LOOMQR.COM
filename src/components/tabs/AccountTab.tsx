@@ -13,6 +13,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { CheckoutButton } from '@/components/CheckoutButton';
 
 interface AccountTabProps {
   user: any;
@@ -176,7 +177,13 @@ export function AccountTab({ user, isPro, userId }: AccountTabProps) {
                 <p className="text-xs color-muted leading-relaxed">
                   Access dynamic QR capabilities and advanced scan analytics.
                 </p>
-                <button className="primary m-t-2">Upgrade to Pro</button>
+                <CheckoutButton 
+                  priceId={process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID || ''} 
+                  tier="pro"
+                  buttonText="Upgrade to Pro" 
+                  mode="subscription"
+                  className="primary m-t-2" 
+                />
               </div>
             )}
           </div>

@@ -7,6 +7,7 @@ import { useAssets } from '@/hooks/use-assets';
 import { useQRGenerator } from '@/hooks/use-qr-generator';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { MobileNav } from '@/components/layout/MobileNav';
 import { CreateTab } from '@/components/tabs/CreateTab';
 import { LibraryTab } from '@/components/tabs/LibraryTab';
 import { AnalyticsTab } from '@/components/tabs/AnalyticsTab';
@@ -74,6 +75,14 @@ export default function Home() {
         theme={theme} 
         setTheme={setTheme} 
         onLoginClick={() => setShowLoginModal(true)} 
+        isPro={isPro}
+      />
+
+      <MobileNav 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        theme={theme} 
+        setTheme={setTheme} 
         isPro={isPro}
       />
 

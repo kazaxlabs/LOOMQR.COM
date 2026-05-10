@@ -164,15 +164,43 @@ const faqs = [
   },
 ];
 
+import { CheckoutButton } from '@/components/CheckoutButton';
+import { useAuth } from '@/hooks/use-auth';
+
 /* ─── Component ────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
+  const { isLoggedIn } = useAuth();
   const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('monthly');
+  const [country, setCountry] = React.useState('US');
+
+  React.useEffect(() => {
+    // Basic Canada detection
+    const isCanada = navigator.language.includes('CA') || 
+                     Intl.DateTimeFormat().resolvedOptions().timeZone.includes('Toronto') ||
+                     Intl.DateTimeFormat().resolvedOptions().timeZone.includes('Vancouver') ||
+                     Intl.DateTimeFormat().resolvedOptions().timeZone.includes('Montreal');
+    
+    if (isCanada) {
+      setCountry('CA');
+    }
+  }, []);
+
+  const formatPrice = (price: number) => {
+    if (price === 0) return "$0";
+    const currency = country === 'CA' ? 'CAD' : 'USD';
+    const locale = country === 'CA' ? 'en-CA' : 'en-US';
+    return new Intl.NumberFormat(locale, { 
+      style: 'currency', 
+      currency: currency,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
 
   const tiers = [
     {
       plan: "Starter",
-      price: "$0",
+      price: 0,
       desc: "For individuals and side projects.",
       features: [
         "3 Dynamic QR Codes",
@@ -186,8 +214,8 @@ export default function LandingPage() {
     },
     {
       plan: "Pro",
-      price: billingCycle === 'monthly' ? "$12" : "$10",
-      sub: billingCycle === 'monthly' ? "per month" : "per month, billed annually",
+      price: billingCycle === 'monthly' ? 12 : 10,
+      sub: billingCycle === 'annual' ? "Billed annually" : "per month",
       desc: "Perfect for growing brands and creators.",
       features: [
         "100 Dynamic QR Codes",
@@ -197,13 +225,14 @@ export default function LandingPage() {
         "Bulk Generation",
         "Priority Email Support",
       ],
-      cta: "Upgrade to Pro",
+      cta: "Go Pro",
       accent: true,
+      priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
     },
     {
       plan: "Business",
-      price: billingCycle === 'monthly' ? "$39" : "$32",
-      sub: billingCycle === 'monthly' ? "per month" : "per month, billed annually",
+      price: billingCycle === 'monthly' ? 39 : 32,
+      sub: billingCycle === 'annual' ? "Billed annually" : "per month",
       desc: "Institutional grade for teams and agencies.",
       features: [
         "Unlimited Dynamic QR Codes",
@@ -216,6 +245,7 @@ export default function LandingPage() {
       ],
       cta: "Contact Sales",
       accent: false,
+      priceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID
     }
   ];
 
@@ -255,7 +285,7 @@ export default function LandingPage() {
         </nav>
 
         {/* ── Hero ───────────────────────────────────────────────────── */}
-        <section className="section" style={{ padding: '160px 2rem 80px 2rem' }} aria-labelledby="hero-heading">
+        <section className="landing-section" style={{ paddingTop: '160px' }} aria-labelledby="hero-heading">
           <div className="hero-glow" aria-hidden="true" />
           <div style={{ zIndex: 10, maxWidth: '900px' }}>
             <h1 id="hero-heading" className="h-xl">
@@ -296,7 +326,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── How It Works ────────────────────────────────────────────── */}
-        <section id="how-it-works" className="section" style={{ background: 'var(--accent-soft)', borderRadius: '64px', margin: '0 2rem' }} aria-labelledby="how-it-works-heading">
+        <section id="how-it-works" className="landing-section" style={{ background: 'var(--accent-soft)', borderRadius: '64px', margin: '0 1.5rem' }} aria-labelledby="how-it-works-heading">
           <div style={{ maxWidth: '1200px', width: '100%' }}>
             <div style={{ marginBottom: '60px' }}>
               <span className="feature-tag">3-step process</span>
@@ -493,15 +523,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+            <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
               {tiers.map((tier, i) => (
-                <div key={i} className="glass-card" style={{ 
+                <div key={i} className={`glass-card ${tier.accent ? 'pricing-card-accent' : ''}`} style={{ 
                   background: tier.accent ? 'var(--accent)' : '#fff', 
                   border: tier.accent ? 'none' : '1px solid var(--border)',
-                  padding: '3rem 2.5rem',
+                  padding: '3rem 2rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  transform: tier.accent ? 'scale(1.05)' : undefined,
+                  transform: (tier.accent && typeof window !== 'undefined' && window.innerWidth > 768) ? 'scale(1.05)' : undefined,
                   zIndex: tier.accent ? 1 : 0,
                   boxShadow: tier.accent ? '0 20px 40px rgba(79, 70, 229, 0.15)' : undefined
                 }}>
@@ -515,8 +545,8 @@ export default function LandingPage() {
                       marginBottom: '0.5rem'
                     }}>{tier.plan}</div>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
-                      <div style={{ fontSize: '3rem', fontWeight: 900, color: tier.accent ? '#fff' : 'var(--text)' }}>{tier.price}</div>
-                      {tier.price !== "$0" && (
+                      <div style={{ fontSize: '3rem', fontWeight: 900, color: tier.accent ? '#fff' : 'var(--text)' }}>{formatPrice(tier.price)}</div>
+                      {tier.price !== 0 && (
                         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: tier.accent ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>/mo</div>
                       )}
                     </div>
@@ -538,17 +568,36 @@ export default function LandingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/login" className="primary w-full" style={{ 
-                    background: tier.accent ? '#fff' : 'var(--text)', 
-                    color: tier.accent ? 'var(--accent)' : '#fff', 
-                    textAlign: 'center', 
-                    display: 'block',
-                    padding: '1.1rem',
-                    fontSize: '1rem',
-                    fontWeight: 700
-                  }}>
-                    {tier.cta}
-                  </Link>
+                  {isLoggedIn && tier.priceId ? (
+                    <CheckoutButton 
+                      priceId={tier.priceId} 
+                      tier={tier.plan.toLowerCase()}
+                      buttonText={tier.cta}
+                      mode="subscription"
+                      className="primary w-full"
+                      style={{ 
+                        background: tier.accent ? '#fff' : 'var(--text)', 
+                        color: tier.accent ? 'var(--accent)' : '#fff', 
+                        textAlign: 'center', 
+                        display: 'block',
+                        padding: '1.1rem',
+                        fontSize: '1rem',
+                        fontWeight: 700
+                      }}
+                    />
+                  ) : (
+                    <Link href="/login" className="primary w-full" style={{ 
+                      background: tier.accent ? '#fff' : 'var(--text)', 
+                      color: tier.accent ? 'var(--accent)' : '#fff', 
+                      textAlign: 'center', 
+                      display: 'block',
+                      padding: '1.1rem',
+                      fontSize: '1rem',
+                      fontWeight: 700
+                    }}>
+                      {tier.cta}
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>

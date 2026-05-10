@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 
 export async function POST(req: Request) {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json(
+      { error: 'Stripe configuration is missing on the server.' },
+      { status: 500 }
+    );
+  }
   try {
     const body = await req.json();
     const { priceId, userId, tier, successUrl, cancelUrl } = body;
@@ -41,9 +47,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (err: any) {
-    console.error('Error creating checkout session:', err);
+    console.error('Stripe Session Error:', err);
     return NextResponse.json(
-      { error: err.message || 'Internal Server Error' },
+      { error: `Stripe: ${err.message || 'Unknown error'}` },
       { status: err.statusCode || 500 }
     );
   }
